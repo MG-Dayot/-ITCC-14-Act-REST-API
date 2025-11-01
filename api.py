@@ -33,3 +33,18 @@ petFields = {
     'age':fields.Integer,
 }
 
+class Pets(Resource):
+    @marshal_with(petFields)
+    def get(self):
+        pets = PetModel.query.all()
+        return pets
+    
+    @marshal_with(petFields)
+    def post(self):
+        args = pet_args.parse_args()
+        pet = PetModel(name=args['name'], species=args['species'], age=args['age'])
+        db.session.add(pet)
+        db.session.commit()
+        pets = PetModel.query.all()
+        return pets, 201
+
